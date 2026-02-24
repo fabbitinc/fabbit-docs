@@ -26,9 +26,9 @@
 - [x] 해외 엔터프라이즈 PLM 비교 — Windchill, Teamcenter, ENOVIA
 - [x] 해외 클라우드 PLM 비교 — Arena, OpenBOM, Onshape, Fusion Manage
 - [x] 현행 방식(엑셀/파일서버/종이) 한계점 정리 — 정량 수치 포함
-- [ ] **국내 중소기업용 PLM/PDM 솔루션 조사** — RESEARCH.md 2-1 참고
-- [ ] **국내 도면관리 전용 솔루션 조사** — RESEARCH.md 2-2 참고
-- [ ] Fabbit 차별점 정리표 — 국내 경쟁사 포함 후 재작성 필요
+- [x] **국내 중소기업용 PLM/PDM 솔루션 조사** — 코너스톤, ASTRA, 싱글톤, JK-PLM
+- [x] **국내 도면관리 전용 솔루션 조사** — LinkBridge, ASTRA PDM, FRONT21, Vault
+- [x] Fabbit 차별점 정리표 — 5축 비교 포지셔닝 완료
 - 정리 위치: [[10_제품/plm/경쟁사-비교]]
 
 ## 3. 고객 인터뷰 (P-1, P-2)
