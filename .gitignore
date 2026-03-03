@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# Obsidian 로컬 상태 파일
+.obsidian
