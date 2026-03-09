@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부품관리 — 와이어프레임</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --wire-bg: #fff;
+    --border: #ddd;
+    --accent: #6c5ce7;
+    --highlight: #fff3cd;
+    --text: #333;
+    --text-muted: #888;
+    --tab-h: 44px;
+    --section-design: #dfe6fd;
+    --section-prototype: #d5f5e3;
+    --section-production: #fdebd0;
+    --section-obsolete: #fadbd8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "Pretendard", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ===== 상단 탭 바 ===== */
+  .tab-bar {
+    height: var(--tab-h);
+    background: var(--wire-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+    padding: 0 24px;
+    gap: 0;
+  }
+
+  .tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 0 16px;
+    cursor: pointer;
+    transition: color 0.1s, border-color 0.1s;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    color: var(--accent);
+    font-weight: 600;
+    border-bottom-color: var(--accent);
+  }
+
+  /* ===== 콘텐츠 ===== */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .screen-header {
+    padding: 20px 32px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--wire-bg);
+  }
+
+  .screen-header h1 { font-size: 18px; font-weight: 700; }
+  .screen-header .meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .wireframe {
+    padding: 24px 32px;
+    background: var(--wire-bg);
+    min-height: calc(100vh - var(--tab-h) - 80px);
+  }
+
+  .wire-row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .wire-row:last-child { margin-bottom: 0; }
+  .wire-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .wire-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .wire-block {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    transition: background 0.15s;
+  }
+
+  .wire-block h4 {
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); margin-bottom: 8px;
+  }
+
+  .wire-block .field {
+    font-size: 13px; color: var(--text); margin-bottom: 2px;
+    font-family: "SF Mono", "Consolas", monospace;
+  }
+
+  .wire-block .field .label { color: var(--text-muted); }
+
+  /* ===== 상태 배지 ===== */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .badge.design    { background: var(--section-design); }
+  .badge.prototype { background: var(--section-prototype); }
+  .badge.production{ background: var(--section-production); }
+  .badge.obsolete  { background: var(--section-obsolete); }
+
+  /* ===== 버튼 mock ===== */
+  .btn-mock {
+    display: inline-block; font-size: 12px; padding: 4px 12px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: #fff; margin-right: 4px; margin-top: 8px;
+  }
+  .btn-mock.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ===== 폼 mock ===== */
+  .form-row {
+    display: grid; grid-template-columns: 120px 1fr;
+    align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px;
+  }
+  .form-row .label { color: var(--text-muted); text-align: right; font-family: "SF Mono", "Consolas", monospace; }
+
+  .form-input {
+    border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px;
+    font-size: 13px; font-family: "SF Mono", "Consolas", monospace;
+    background: #fff; color: var(--text);
+  }
+  .form-input.readonly { background: #f0f0f0; color: var(--text-muted); }
+  select.form-input { appearance: auto; }
+  textarea.form-input { resize: vertical; min-height: 60px; }
+</style>
+</head>
+<body>
+
+<!-- ===== 상단: 화면 탭 ===== -->
+<div class="tab-bar">
+  <button class="tab active" data-screen="list">목록</button>
+  <button class="tab" data-screen="detail">상세</button>
+  <button class="tab" data-screen="edit">편집</button>
+</div>
+
+<div class="main">
+
+  <!-- 목록 화면 -->
+  <div class="screen active" id="screen-list">
+    <div class="screen-header">
+      <h1>목록 화면</h1>
+      <div class="meta">전체 부품을 검색·필터하고 관리 진입점을 제공하는 화면</div>
+    </div>
+    <div class="wireframe">
+      <div class="wire-row">
+        <div class="wire-block">
+          <h4>검색 / 필터</h4>
+          <div class="field"><span class="label">검색:</span> 품번, 품명 통합 검색</div>
+          <div class="field"><span class="label">필터:</span> 상태 · 유형 · 카테고리</div>
+          <div class="field"><span class="label">정렬:</span> 최근 수정순 (기본)</div>
+        </div>
+      </div>
+      <div class="wire-row">
+        <div class="wire-block">
+          <h4>부품 목록 테이블</h4>
+          <div class="field" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
+            □ · 품번 · 품명 · 유형 · 상태 · 현재 리비전 · 최종수정일 · 수정자
+          </div>
+          <div class="field">
+            <span class="badge design">Design</span>
+            ENG-V6-001 · V6 엔진 ASS'Y · 조립품 · Rev.C · 03-07
+          </div>
+          <div class="field">
+            <span class="badge production">Production</span>
+            ENG-V6-002 · 실린더 블록 · 가공품 · Rev.B · 03-05
+          </div>
+          <div class="field">
+            <span class="badge obsolete">Obsolete</span>
+            ENG-V4-001 · V4 엔진 ASS'Y · 조립품 · Rev.A · 02-10
+          </div>
+        </div>
+      </div>
+      <div class="wire-row">
+        <div class="wire-block">
+          <h4>액션</h4>
+          <span class="btn-mock primary">새 부품 등록</span>
+          <span class="btn-mock">일괄 상태 변경</span>
+          <span class="btn-mock">내보내기</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상세 화면 -->
+  <div class="screen" id="screen-detail">
+    <div class="screen-header">
+      <h1>상세 화면</h1>
+      <div class="meta">개별 부품의 전체 정보를 읽기 전용으로 조회하는 화면</div>
+    </div>
+    <div class="wireframe">
+      <div class="wire-row cols-2">
+        <div class="wire-block">
+          <h4>기본 정보</h4>
+          <div class="field"><span class="label">품번:</span> ENG-V6-001</div>
+          <div class="field"><span class="label">품명:</span> V6 엔진 ASS'Y</div>
+          <div class="field"><span class="label">유형:</span> 조립품</div>
+          <div class="field"><span class="label">상태:</span> <span class="badge production">Production</span></div>
+          <div class="field"><span class="label">카테고리:</span> 엔진</div>
+        </div>
+        <div class="wire-block">
+          <h4>리비전</h4>
+          <div class="field">Rev.C &nbsp; Released &nbsp; 03-07</div>
+          <div class="field" style="color:var(--text-muted)">Rev.B &nbsp; Obsolete &nbsp; 02-15</div>
+          <div class="field" style="color:var(--text-muted)">Rev.A &nbsp; Obsolete &nbsp; 01-20</div>
+        </div>
+      </div>
+      <div class="wire-row cols-2">
+        <div class="wire-block">
+          <h4>속성</h4>
+          <div class="field"><span class="label">재질:</span> AL6061 &nbsp;|&nbsp; <span class="label">무게:</span> 85.3kg</div>
+          <div class="field"><span class="label">제조사:</span> 자사 &nbsp;|&nbsp; <span class="label">RoHS:</span> Y</div>
+        </div>
+        <div class="wire-block">
+          <h4>연결 정보</h4>
+          <div class="field"><span class="label">BOM 하위:</span> 47건 &nbsp;|&nbsp; <span class="label">Where-Used:</span> 2건</div>
+          <div class="field"><span class="label">ECO:</span> ECO-0023, ECO-0019</div>
+        </div>
+      </div>
+      <div class="wire-row">
+        <div class="wire-block">
+          <h4>이력</h4>
+          <div class="field">03-07 09:00 &nbsp; 김설계 &nbsp; Rev.C Released</div>
+          <div class="field">03-05 14:30 &nbsp; 김설계 &nbsp; Rev.C Draft 도면 변경</div>
+        </div>
+      </div>
+      <div style="margin-top: 12px">
+        <span class="btn-mock primary">편집</span>
+        <span class="btn-mock">상태 변경</span>
+        <span class="btn-mock">삭제</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 편집 화면 -->
+  <div class="screen" id="screen-edit">
+    <div class="screen-header">
+      <h1>편집 화면</h1>
+      <div class="meta">부품 정보를 수정하는 화면 (신규 등록 시에도 동일한 레이아웃)</div>
+    </div>
+    <div class="wireframe">
+      <div class="wire-row">
+        <div class="wire-block">
+          <h4>기본 정보</h4>
+          <div class="form-row"><span class="label">품번</span><input class="form-input readonly" value="ENG-V6-001" readonly></div>
+          <div class="form-row"><span class="label">품명 *</span><input class="form-input" value="V6 엔진 ASS'Y"></div>
+          <div class="form-row"><span class="label">유형 *</span><select class="form-input"><option>조립품</option><option>부품</option><option>원자재</option></select></div>
+          <div class="form-row"><span class="label">카테고리</span><select class="form-input"><option>엔진</option><option>차체</option><option>전장</option></select></div>
+        </div>
+      </div>
+      <div class="wire-row cols-2">
+        <div class="wire-block">
+          <h4>속성</h4>
+          <div class="form-row"><span class="label">재질</span><input class="form-input" value="AL6061"></div>
+          <div class="form-row"><span class="label">무게 (kg)</span><input class="form-input" type="number" value="85.3"></div>
+          <div class="form-row"><span class="label">제조사</span><input class="form-input" value="자사"></div>
+          <div class="form-row"><span class="label">RoHS</span><select class="form-input"><option>Y</option><option>N</option><option>N/A</option></select></div>
+        </div>
+        <div class="wire-block">
+          <h4>커스텀 속성</h4>
+          <div class="form-row"><span class="label">표면처리</span><input class="form-input" value="아노다이징"></div>
+          <div class="form-row"><span class="label">공차등급</span><input class="form-input" value="IT7"></div>
+          <div style="margin-top: 8px"><span class="btn-mock">+ 속성 추가</span></div>
+        </div>
+      </div>
+      <div class="wire-row">
+        <div class="wire-block">
+          <h4>변경 사유</h4>
+          <textarea class="form-input" style="width:100%" placeholder="변경 사유를 입력하세요 (Production 이상 필수)"></textarea>
+        </div>
+      </div>
+      <div style="margin-top: 16px; display: flex; gap: 8px;">
+        <span class="btn-mock primary">저장</span>
+        <span class="btn-mock">취소</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 탭 전환
+  document.querySelectorAll('.tab[data-screen]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + tab.dataset.screen).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

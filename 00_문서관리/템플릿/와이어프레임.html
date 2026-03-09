@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{기능명}} — 와이어프레임</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --wire-bg: #fff;
+    --border: #ddd;
+    --accent: #6c5ce7;
+    --text: #333;
+    --text-muted: #888;
+    --tab-h: 44px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "Pretendard", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ===== 상단 탭 바 ===== */
+  .tab-bar {
+    height: var(--tab-h);
+    background: var(--wire-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+    padding: 0 24px;
+  }
+
+  .tab {
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    font-family: inherit; font-size: 13px;
+    color: var(--text-muted); padding: 0 16px;
+    cursor: pointer; transition: color 0.1s, border-color 0.1s;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    color: var(--accent); font-weight: 600;
+    border-bottom-color: var(--accent);
+  }
+
+  /* ===== 콘텐츠 ===== */
+  .main { flex: 1; overflow-y: auto; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .screen-header {
+    padding: 20px 32px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--wire-bg);
+  }
+
+  .screen-header h1 { font-size: 18px; font-weight: 700; }
+  .screen-header .meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .wireframe {
+    padding: 24px 32px;
+    background: var(--wire-bg);
+    min-height: calc(100vh - var(--tab-h) - 80px);
+  }
+
+  .wire-row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .wire-row:last-child { margin-bottom: 0; }
+  .wire-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .wire-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .wire-block {
+    border: 1px solid var(--border); border-radius: 6px; padding: 16px;
+  }
+
+  .wire-block h4 {
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); margin-bottom: 8px;
+  }
+
+  .wire-block .field {
+    font-size: 13px; color: var(--text); margin-bottom: 2px;
+    font-family: "SF Mono", "Consolas", monospace;
+  }
+
+  .wire-block .field .label { color: var(--text-muted); }
+
+  .btn-mock {
+    display: inline-block; font-size: 12px; padding: 4px 12px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: #fff; margin-right: 4px; margin-top: 8px;
+  }
+  .btn-mock.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .form-row {
+    display: grid; grid-template-columns: 120px 1fr;
+    align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px;
+  }
+  .form-row .label { color: var(--text-muted); text-align: right; font-family: "SF Mono", "Consolas", monospace; }
+
+  .form-input {
+    border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px;
+    font-size: 13px; font-family: "SF Mono", "Consolas", monospace;
+    background: #fff; color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<!--
+  와이어프레임 템플릿
+  - 이 파일은 iframe 안에서 렌더링됩니다 (React wireframe 앱)
+  - 네비게이션, 정책 패널은 React 앱이 담당하므로 여기에 포함하지 마세요
+  - 정책/규칙은 같은 폴더의 policies/*.md 파일로 관리합니다 (SSOT)
+  - 탭으로 화면(목록/상세/편집 등)을 분리하세요
+-->
+
+<div class="tab-bar">
+  <button class="tab active" data-screen="list">목록</button>
+  <button class="tab" data-screen="detail">상세</button>
+  <!-- 필요에 따라 탭 추가 -->
+</div>
+
+<div class="main">
+
+  <!-- 목록 화면 예시 -->
+  <div class="screen active" id="screen-list">
+    <div class="screen-header">
+      <h1>목록 화면</h1>
+      <div class="meta">설명을 입력하세요</div>
+    </div>
+    <div class="wireframe">
+      <div class="wire-row">
+        <div class="wire-block">
+          <h4>영역 제목</h4>
+          <div class="field"><span class="label">필드:</span> 값 설명</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상세 화면 예시 -->
+  <div class="screen" id="screen-detail">
+    <div class="screen-header">
+      <h1>상세 화면</h1>
+      <div class="meta">설명을 입력하세요</div>
+    </div>
+    <div class="wireframe">
+      <div class="wire-row cols-2">
+        <div class="wire-block">
+          <h4>영역 A</h4>
+          <div class="field"><span class="label">필드:</span> 값</div>
+        </div>
+        <div class="wire-block">
+          <h4>영역 B</h4>
+          <div class="field"><span class="label">필드:</span> 값</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.tab[data-screen]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + tab.dataset.screen).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
