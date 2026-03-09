@@ -3,7 +3,10 @@ import { ScreenHeader, WireBlock, Field, Badge, MockButton, Row, ButtonGroup } f
 export default function 상세() {
   return (
     <div className="p-6 bg-white min-h-full">
-      <ScreenHeader title="상세 화면" desc="개별 부품의 전체 정보를 읽기 전용으로 조회하는 화면" />
+      <ScreenHeader
+        title="상세 화면"
+        desc="상태, 리비전, 연결 정보를 확인하고 편집 · Release · 상태 변경을 시작하는 복합 화면"
+      />
 
       <Row cols={2}>
         <WireBlock title="기본 정보">
@@ -15,6 +18,7 @@ export default function 상세() {
         </WireBlock>
         <WireBlock title="리비전">
           <Field>Rev.C &nbsp; Released &nbsp; 03-07</Field>
+          <Field><Badge status="design" label="Draft" /> Rev.D 초안 존재 · 편집 가능</Field>
           <Field><span className="text-gray-400">Rev.B &nbsp; Obsolete &nbsp; 02-15</span></Field>
           <Field><span className="text-gray-400">Rev.A &nbsp; Obsolete &nbsp; 01-20</span></Field>
         </WireBlock>
@@ -40,6 +44,7 @@ export default function 상세() {
 
       <ButtonGroup>
         <MockButton primary>편집</MockButton>
+        <MockButton>Release</MockButton>
         <MockButton>상태 변경</MockButton>
         <MockButton>삭제</MockButton>
       </ButtonGroup>

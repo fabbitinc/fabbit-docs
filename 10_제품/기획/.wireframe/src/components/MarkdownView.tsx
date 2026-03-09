@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkFrontmatter from "remark-frontmatter";
@@ -126,7 +126,7 @@ export function MarkdownView({ url }: Props) {
   );
 }
 
-function headingId(children: React.ReactNode): string {
+function headingId(children: ReactNode): string {
   const text = extractText(children);
   return text
     .toLowerCase()
@@ -134,12 +134,12 @@ function headingId(children: React.ReactNode): string {
     .replace(/\s+/g, "-");
 }
 
-function extractText(node: React.ReactNode): string {
+function extractText(node: ReactNode): string {
   if (typeof node === "string") return node;
   if (typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(extractText).join("");
-  if (node && typeof node === "object" && "props" in node) {
-    return extractText((node as React.ReactElement).props.children);
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return extractText(node.props.children);
   }
   return "";
 }

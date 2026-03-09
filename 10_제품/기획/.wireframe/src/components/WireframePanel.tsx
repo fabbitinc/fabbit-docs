@@ -50,7 +50,7 @@ export function WireframePanel({ module: mod, feature, screens, activeScreen, on
       )}
 
       {/* 와이어프레임 컴포넌트 */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-5">
         {Component ? (
           <Component />
         ) : (

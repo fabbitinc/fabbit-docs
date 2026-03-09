@@ -113,6 +113,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@planning": planningDir,
       "@wire": path.resolve(__dirname, "./src/components/wire"),
+      "react/jsx-runtime": path.resolve(__dirname, "./node_modules/react/jsx-runtime.js"),
+      "react/jsx-dev-runtime": path.resolve(__dirname, "./node_modules/react/jsx-dev-runtime.js"),
     },
   },
   server: {
