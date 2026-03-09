@@ -14,6 +14,7 @@ interface FeatureData {
   planning: boolean;
   policy: boolean;
   screens: Record<string, ScreenInfo>;
+  flows: string[];
 }
 
 function featureScanPlugin() {
@@ -56,7 +57,17 @@ function featureScanPlugin() {
           }
         }
 
-        tree[mod][feat] = { planning: hasPlanning, policy: hasPolicy, screens };
+        let flows: string[] = [];
+        const flowsDir = path.join(featPath, "flows");
+        if (fs.existsSync(flowsDir) && fs.statSync(flowsDir).isDirectory()) {
+          flows = fs
+            .readdirSync(flowsDir)
+            .filter((f) => f.endsWith(".tsx"))
+            .map((f) => f.replace(/\.tsx$/, ""))
+            .sort((a, b) => a.localeCompare(b, "ko"));
+        }
+
+        tree[mod][feat] = { planning: hasPlanning, policy: hasPolicy, screens, flows };
       }
     }
 

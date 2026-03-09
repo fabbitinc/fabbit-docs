@@ -3,7 +3,7 @@
 모든 컴포넌트는 `@wire`에서 import한다.
 
 ```tsx
-import { ScreenHeader, WireBlock, Field, Badge, ... } from "@wire";
+import { ScreenHeader, WireBlock, Field, Badge, FlowSection, ... } from "@wire";
 ```
 
 ## ScreenHeader
@@ -40,13 +40,14 @@ import { ScreenHeader, WireBlock, Field, Badge, ... } from "@wire";
 
 | prop | type | 설명 |
 |------|------|------|
-| `status` | `string` | `design` / `prototype` / `production` / `obsolete` |
+| `status` | `string` | `design` / `prototype` / `production` / `eol` / `obsolete` |
 | `label?` | `string` | 표시 텍스트 (기본: status) |
 
 색상 매핑:
 - design → 파랑
 - prototype → 초록
 - production → 주황
+- eol → 노랑
 - obsolete → 빨강
 
 ## MockButton
@@ -100,3 +101,45 @@ import { ScreenHeader, WireBlock, Field, Badge, ... } from "@wire";
 ## ButtonGroup
 
 버튼들을 가로 배치. `mt-3` 자동 적용.
+
+## FlowSection
+
+플로우 탭에서 쓰는 섹션 블록.
+
+| prop | type | 설명 |
+|------|------|------|
+| `title` | `string` | 섹션 제목 |
+| `desc?` | `string` | 한줄 설명 |
+| `children` | `ReactNode` | 내용 |
+
+## FlowRow
+
+플로우 단계를 가로로 배치.
+
+| prop | type | 설명 |
+|------|------|------|
+| `children` | `ReactNode` | `FlowStep`, `FlowArrow` 등 |
+| `className?` | `string` | 추가 클래스 |
+
+## FlowStep
+
+플로우 단계 카드.
+
+| prop | type | 설명 |
+|------|------|------|
+| `title` | `string` | 단계 제목 |
+| `kind?` | `"start" \| "action" \| "decision" \| "system" \| "result"` | 단계 유형 |
+| `children?` | `ReactNode` | 보조 설명 |
+| `className?` | `string` | 추가 클래스 |
+
+## FlowArrow
+
+단계 사이 연결 표시.
+
+| prop | type | 설명 |
+|------|------|------|
+| `label?` | `string` | 조건/분기 라벨 |
+
+## FlowNote
+
+보조 메모나 예외 조건을 표시.

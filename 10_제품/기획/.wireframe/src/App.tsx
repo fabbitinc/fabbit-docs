@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "./components/Sidebar";
 import { WireframePanel } from "./components/WireframePanel";
+import { FlowPanel } from "./components/FlowPanel";
 import { PolicyPanel } from "./components/PolicyPanel";
 import { MarkdownView } from "./components/MarkdownView";
-import { Monitor, FileText, ScrollText } from "lucide-react";
+import { Monitor, GitBranch, FileText, ScrollText } from "lucide-react";
 import type { FeatureTree, Selection, CenterTab } from "./types";
 
 const CENTER_TABS: { key: CenterTab; label: string; icon: typeof Monitor }[] = [
   { key: "wireframe", label: "와이어프레임", icon: Monitor },
+  { key: "flow", label: "플로우", icon: GitBranch },
   { key: "planning", label: "기획", icon: FileText },
   { key: "policy", label: "정책", icon: ScrollText },
 ];
@@ -17,6 +19,7 @@ export default function App() {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [centerTab, setCenterTab] = useState<CenterTab>("wireframe");
   const [activeScreen, setActiveScreen] = useState<string>("");
+  const [activeFlow, setActiveFlow] = useState<string>("");
 
   useEffect(() => {
     fetch("/api/tree")
@@ -33,24 +36,31 @@ export default function App() {
 
   const info = selection ? tree[selection.module]?.[selection.feature] : null;
   const screenNames = info ? Object.keys(info.screens) : [];
+  const flowNames = info ? info.flows : [];
   const hasScreens = screenNames.length > 0;
+  const hasFlows = flowNames.length > 0;
 
   // 선택된 기능이 바뀌면 탭/화면 초기화
   useEffect(() => {
     if (!info) return;
     if (hasScreens) {
       setCenterTab("wireframe");
-      setActiveScreen(screenNames[0]);
+      setActiveScreen(screenNames[0] || "");
+      setActiveFlow(flowNames[0] || "");
+    } else if (hasFlows) {
+      setCenterTab("flow");
+      setActiveFlow(flowNames[0] || "");
     } else if (info.planning) {
       setCenterTab("planning");
     } else if (info.policy) {
       setCenterTab("policy");
     }
-  }, [selection]);
+  }, [selection?.module, selection?.feature, hasScreens, hasFlows, info?.planning, info?.policy]);
 
   const availableTabs = info
     ? CENTER_TABS.filter((t) => {
         if (t.key === "wireframe") return hasScreens;
+        if (t.key === "flow") return hasFlows;
         if (t.key === "planning") return info.planning;
         if (t.key === "policy") return info.policy;
         return false;
@@ -104,6 +114,14 @@ export default function App() {
                 screens={screenNames}
                 activeScreen={activeScreen}
                 onScreenChange={setActiveScreen}
+              />
+            ) : centerTab === "flow" && hasFlows ? (
+              <FlowPanel
+                module={selection.module}
+                feature={selection.feature}
+                flows={flowNames}
+                activeFlow={activeFlow}
+                onFlowChange={setActiveFlow}
               />
             ) : centerTab === "planning" && info?.planning ? (
               <MarkdownView
