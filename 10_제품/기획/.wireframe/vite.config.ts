@@ -4,12 +4,21 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import fs from "fs";
 
-// 기획 폴더 하위의 폴더 트리를 스캔하는 플러그인
-function featureScanPlugin() {
-  const planningDir = path.resolve(__dirname, "..");
+const planningDir = path.resolve(__dirname, "..");
 
-  function scanTree() {
-    const tree: Record<string, Record<string, { wireframe: boolean; policy: boolean; policies: string[] }>> = {};
+interface ScreenInfo {
+  policies: string[];
+}
+
+interface FeatureData {
+  planning: boolean;
+  policy: boolean;
+  screens: Record<string, ScreenInfo>;
+}
+
+function featureScanPlugin() {
+  function scanTree(): Record<string, Record<string, FeatureData>> {
+    const tree: Record<string, Record<string, FeatureData>> = {};
 
     const modules = fs.readdirSync(planningDir).filter((name) => {
       const full = path.join(planningDir, name);
@@ -19,7 +28,6 @@ function featureScanPlugin() {
     for (const mod of modules) {
       tree[mod] = {};
       const modPath = path.join(planningDir, mod);
-      if (!fs.statSync(modPath).isDirectory()) continue;
 
       const features = fs.readdirSync(modPath).filter((name) => {
         const full = path.join(modPath, name);
@@ -29,16 +37,26 @@ function featureScanPlugin() {
       for (const feat of features) {
         const featPath = path.join(modPath, feat);
         const files = fs.readdirSync(featPath);
-        const hasWireframe = files.includes("와이어프레임.html");
+        const hasPlanning = files.includes("기획.md");
         const hasPolicy = files.includes("정책.md");
 
-        let policies: string[] = [];
-        const policiesDir = path.join(featPath, "policies");
-        if (fs.existsSync(policiesDir) && fs.statSync(policiesDir).isDirectory()) {
-          policies = fs.readdirSync(policiesDir).filter((f) => f.endsWith(".md"));
+        // screens/ 폴더 스캔: .tsx = 화면, {screen}-*.md = 해당 화면의 정책
+        const screens: Record<string, ScreenInfo> = {};
+        const screensDir = path.join(featPath, "screens");
+        if (fs.existsSync(screensDir) && fs.statSync(screensDir).isDirectory()) {
+          const allFiles = fs.readdirSync(screensDir);
+          const tsxFiles = allFiles.filter((f) => f.endsWith(".tsx"));
+          const mdFiles = allFiles.filter((f) => f.endsWith(".md"));
+
+          for (const tsx of tsxFiles) {
+            const screenName = tsx.replace(/\.tsx$/, "");
+            // {screenName}-*.md 패턴으로 매칭
+            const policies = mdFiles.filter((md) => md.startsWith(screenName + "-"));
+            screens[screenName] = { policies };
+          }
         }
 
-        tree[mod][feat] = { wireframe: hasWireframe, policy: hasPolicy, policies };
+        tree[mod][feat] = { planning: hasPlanning, policy: hasPolicy, screens };
       }
     }
 
@@ -48,13 +66,11 @@ function featureScanPlugin() {
   return {
     name: "feature-scan",
     configureServer(server: any) {
-      // API: 트리 정보
       server.middlewares.use("/api/tree", (_req: any, res: any) => {
         res.setHeader("Content-Type", "application/json");
         res.end(JSON.stringify(scanTree()));
       });
 
-      // 기획 폴더의 정적 파일 서빙
       server.middlewares.use("/files", (req: any, res: any) => {
         const filePath = path.join(planningDir, decodeURIComponent(req.url || ""));
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
@@ -84,6 +100,13 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@planning": planningDir,
+      "@wire": path.resolve(__dirname, "./src/components/wire"),
+    },
+  },
+  server: {
+    fs: {
+      allow: [__dirname, planningDir],
     },
   },
 });
