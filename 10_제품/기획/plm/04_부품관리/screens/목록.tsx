@@ -26,9 +26,11 @@ export default function 목록() {
         <WireBlock title="액션">
           <ButtonGroup>
             <MockButton primary>새 부품 등록</MockButton>
-            <MockButton>일괄 상태 변경</MockButton>
             <MockButton>내보내기</MockButton>
           </ButtonGroup>
+          <div className="mt-3 text-[11px] text-gray-500">
+            일괄 상태 변경은 후속 확장 범위로 분리한다.
+          </div>
         </WireBlock>
       </Row>
     </div>
