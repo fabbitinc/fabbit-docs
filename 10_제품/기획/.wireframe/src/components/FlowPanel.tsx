@@ -14,16 +14,26 @@ const flowModules = import.meta.glob<{ default: ComponentType }>(
 
 export function FlowPanel({ module: mod, feature, flows, activeFlow, onFlowChange }: Props) {
   const [Component, setComponent] = useState<ComponentType | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     setComponent(null);
+    setLoadError(null);
     const key = `../../../${mod}/${feature}/flows/${activeFlow}.tsx`;
     const loader = flowModules[key];
     if (!loader) {
       console.warn("flow not found:", key, "available:", Object.keys(flowModules));
+      setLoadError(
+        "플로우 파일을 찾지 못했습니다. 새 flows/*.tsx 파일을 추가한 직후라면 .wireframe dev 서버를 재시작해 주세요.",
+      );
     }
     if (loader) {
-      loader().then((m) => setComponent(() => m.default));
+      loader()
+        .then((m) => setComponent(() => m.default))
+        .catch((error) => {
+          console.error("flow import failed:", key, error);
+          setLoadError("플로우를 불러오지 못했습니다. 파일 문법 오류 또는 dev 서버 상태를 확인해 주세요.");
+        });
     }
   }, [mod, feature, activeFlow]);
 
@@ -50,6 +60,12 @@ export function FlowPanel({ module: mod, feature, flows, activeFlow, onFlowChang
       <div className="flex-1 overflow-y-auto p-4">
         {Component ? (
           <Component />
+        ) : loadError ? (
+          <div className="flex h-full items-center justify-center">
+            <div className="max-w-lg rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+              {loadError}
+            </div>
+          </div>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-400">
             로딩 중...
