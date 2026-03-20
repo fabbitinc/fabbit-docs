@@ -151,14 +151,14 @@
 
 `수익모델-정의.md`와 `사업계획서-별첨1-정렬본.md`에는 회사 단위 정액형
 가격이 남아 있고, `사업계획서-별첨1-경기기반-초안.md`에는 역할별 좌석 기반
-Starter/Team/Org/Enterprise 구조가 들어 있다.
+Starter/Team/Organization/Enterprise 구조가 들어 있다.
 
 캡처 기반 작성에서는 더 최신인 `사업계획서-별첨1-경기기반-초안.md`를
 우선한다. 다만 심사 양식 칸이 좁으면 아래 수준으로 축약한다.
 
 - `무료 Starter -> Team 유료 전환`
 - `초기 매출 추정은 Team 플랜 기준 보수 산정`
-- `Org/Enterprise는 중장기 확장 플랜`
+- `Organization/Enterprise는 중장기 확장 플랜`
 
 ### 범위 충돌
 
